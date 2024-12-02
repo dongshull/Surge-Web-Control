@@ -1,0 +1,23 @@
+name: 同步原仓库更新
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # 每天 0 点运行
+  workflow_dispatch: # 手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 检出 fork 的仓库代码
+        uses: actions/checkout@v3
+
+      - name: 添加原仓库地址
+        run: git remote add upstream https://github.com/geekdada/yasd.git
+
+      - name: 获取原仓库的更新
+        run: |
+          git fetch upstream
+          git merge upstream/main --allow-unrelated-histories # 合并更新到主分支
+          git push origin main # 将更新推送到你的 fork 仓库
